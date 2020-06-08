@@ -15,7 +15,10 @@ int main() {
 
 	std::cout << "Reading image... ";
 	auto img_file_path = "./media/colors-100x100.jpg";
-	auto img = read_image_jpg(img_file_path);
+	//auto img = read_image_jpg(img_file_path);
+
+	auto img = read_image_jpg("./media/colors_try.png");
+
 	std::cout << "Done\n";
 
 	/*std::cout << "Scanning Image... ";

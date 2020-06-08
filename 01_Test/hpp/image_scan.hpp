@@ -8,8 +8,8 @@
 
 namespace gil = boost::gil;
 
-void fill_histogram(gil::rgb8_view_t const& img_v);
-void write_histogram(const char* file_path);
+//void fill_histogram(gil::rgb8_view_t const& img_v);
+//void write_histogram(const char* file_path);
 
 gil::rgb8_view_t read_image_jpg(const char* file_path) {
 
@@ -18,8 +18,8 @@ gil::rgb8_view_t read_image_jpg(const char* file_path) {
 	gil::rgb8_image_t image;
 	gil::read_image(file_path, image, read_settings);
 
-	fill_histogram(gil::view(image));
-	write_histogram("./out_files/multi_hist.txt");
+	//fill_histogram(gil::view(image));
+	//write_histogram("./out_files/multi_hist.txt");
 
 	// to view
 	return gil::view(image);
@@ -79,6 +79,8 @@ void fill_histogram(gil::rgb8_view_t const& img_v) {
 
 	unsigned width = img_v.width();
 	unsigned height = img_v.height();
+
+	// std::midpoint C++20
 
 	for (size_t y = 0; y < height; ++y) {
 		a_half_h = y >= height / 2; // past halfway of height
