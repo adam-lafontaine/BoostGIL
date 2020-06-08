@@ -342,7 +342,7 @@ void build_images(const char* alpha_path, const char* border_path, const char* o
 	const auto idx_len = num_digits(num_images);
 	unsigned idx = 1;
 	char idx_str[100];
-	const auto pass_path_base = str_append_sub(std::string(out_dir), std::string("pass"));
+	const auto pass_path_base = str_append_sub(std::string(out_dir), std::string("pass")); // make sure these subdirectories exist
 	const auto fail_path_base = str_append_sub(std::string(out_dir), std::string("fail"));
 	size_t pass_idx = 0;
 	size_t fail_idx = 1;
