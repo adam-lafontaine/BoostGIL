@@ -218,45 +218,39 @@ void add_defects(view_t const& view)
 
 
 // builds all of the images 
-void build_images(const char* alpha_path, const char* border_path, const char* out_dir)
+void build_images(const char* alpha_path, const char* border_path, const char* pass_dir, const char* fail_dir)
 {
 	auto alpha_img = read_image_from_file(alpha_path);
 	auto alpha_v = gil::view(alpha_img);
 
-	auto ranges = get_letter_ranges(alpha_v);
-
-	std::vector<view_t> letters;
-	letters.reserve(ranges.size());
-
-	for (auto const& range : ranges)
-	{
-		auto width = range.x_end - range.x_begin;
-		auto height = range.y_end - range.y_begin;
-		auto dst_v = view_t(width, height, alpha_v.xy_at(range.x_begin, range.y_begin));
-
-		letters.push_back(dst_v);
-	}
+	auto letter_ranges = get_letter_ranges(alpha_v);
 
 	auto border_img = read_image_from_file(border_path);
 	auto border_v = gil::view(border_img);
 
 	// decide the image dimensions
-	const auto dst_w = border_v.width() + 96;
-	const auto dst_h = border_v.height() + 96;
+	auto const dst_w = border_v.width() + 96;
+	auto const dst_h = border_v.height() + 96;
 
-	const auto num_images = letters.size() * SURFACE_COLRS.size() * LETTER_COLORS.size();
-	const auto idx_len = num_digits(num_images);
+	auto const num_images = letter_ranges.size() * SURFACE_COLRS.size() * LETTER_COLORS.size();
+	auto const idx_len = std::to_string(num_images).length();
 	unsigned idx = 1;
 	char idx_str[100];
-	const auto pass_path_base = str_append_sub(std::string(out_dir), std::string("pass")); // make sure these subdirectories exist
-	const auto fail_path_base = str_append_sub(std::string(out_dir), std::string("fail"));
 	size_t pass_idx = 0;
 	size_t fail_idx = 1;
 
+	auto const sub_view = [&](auto& view, auto const& range)
+	{
+		auto width = range.x_end - range.x_begin;
+		auto height = range.y_end - range.y_begin;
+		return view_t(width, height, alpha_v.xy_at(range.x_begin, range.y_begin)); 
+	};	
+
 	uint8_t letter_index = 0; // for naming files after their letter
 
-	for (auto const& letter_v : letters)
+	for (auto const& range : letter_ranges)
 	{
+		auto const letter_v = sub_view(alpha_v, range);
 		char block_letter = 'A' + letter_index;
 
 		for (auto const& sc : SURFACE_COLRS)
@@ -265,8 +259,8 @@ void build_images(const char* alpha_path, const char* border_path, const char* o
 			{
 				sprintf_s(idx_str, "%0*d", (int)idx_len, idx++); // zero pad index number
 				const auto file_name = std::string(idx_str) + "_" + block_letter + ".png";
-				const auto pass_path = str_append_sub(pass_path_base, file_name);
-				const auto fail_path = str_append_sub(fail_path_base, file_name);
+				const auto pass_path = str_append_sub(pass_dir, file_name);
+				const auto fail_path = str_append_sub(fail_dir, file_name);
 				
 				image_t pass_img(dst_w, dst_h);
 				image_t fail_img(dst_w, dst_h);

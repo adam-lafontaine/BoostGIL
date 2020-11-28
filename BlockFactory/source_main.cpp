@@ -6,7 +6,8 @@ int main()
 {
 	auto alpha_path = "./src_media/alphabet.png";
 	auto border_path = "./src_media/border.png";
-	auto out_dir = "../dst_media/alphabet";       // create directories alphabet/pass and alphabet/fail
+	auto pass_dir = "./out_pass";
+	auto fail_dir = "./out_fail";
 
-	build_images(alpha_path, border_path, out_dir);	
+	build_images(alpha_path, border_path, pass_dir, fail_dir);	
 }
